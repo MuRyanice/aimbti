@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIMBTI</title>
+    <style>
+
+
+       body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f5f5f5;
+}
+
+.container {
+    width: 100%;
+    max-width: 340px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 30px auto;
+}
+
+h1 {
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#progressContainer {
+    width: 100%;
+    background-color: #f3f3f3;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+#progressBar {
+    height: 10px;
+    width: 0;
+    background-color: #4caf50;
+    border-radius: 5px;
+}
+
+#question {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+#answers {
+    margin-bottom: 20px;
+}
+
+.answer-row {
+    margin-bottom: 10px;
+}
+
+.answer-button {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    background-color: #f8f8f8;
+    cursor: pointer;
+    text-align: left;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.answer-button:hover {
+    background-color: #e0e0e0;
+}
+
+.buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.button {
+    padding: 8px 16px;
+    background-color: #4caf50;
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.button:hover {
+    background-color: #45a049;
+}
+.bottom-module {
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    padding: 20px;
+}
+
+.bottom-text {
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.qr-code {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    height: auto;
+}
+
+
+
+</style>
+</head>
+<body>
+   <div class="container">
+        <h1>AI MBTI</h1>
+        <div id="progressContainer">
+            <div id="progressBar"></div>
+        </div>
+        <div id="question"></div>
+        <div id="answers"></div>
+        <div class="buttons">
+            <button class="button" id="resetTest" onclick="resetTest()">重新开始</button>
+        </div>
+        <div id="result"></div>
+        <div class="bottom-module">
+        <div class="bottom-text">AI FOR MBTI 产品说明</div>
+        <div class="additional-text">这是我作为小白利用GPT4开发的第二个应用，虽然都是纯简单的网页应用，但是还是比较令人兴奋的😄，MBTI的算法也是用GPT4提供的简单规则，结果不一定准确，如果大家MBTI的测试结果有建议的话，或者想交流GPT4开发，欢迎扫描下方二维码进群</div>
+        <img class="qr-code" src="your-qrcode-image.png" alt="二维码">
+    </div>
+
+    <script>
+        // Add your 32 MBTI questions here in the format shown below
+       const mbtiQuestions = [
+          {
+            question: "1、当你要外出一整天，你会：",
+            answers: [
+              { text: "计划你要做什么和什么时候做", type: "J" },
+              { text: "看看当天会发生什么", type: "P" }
+            ]
+          },
+          {
+            question: "2、你更喜欢：",
+            answers: [
+              { text: "与朋友交流思想和情感", type: "F" },
+              { text: "解决问题和分析情况", type: "T" }
+            ]
+          },
+          {
+            question: "3、当与他人有分歧时，你更倾向于：",
+            answers: [
+              { text: "说出你的看法，以求达成共识", type: "E" },
+              { text: "保持沉默，以避免冲突", type: "I" }
+            ]
+          },
+          {
+            question: "4、你更喜欢：",
+            answers: [
+              { text: "井然有序的生活", type: "J" },
+              { text: "随遇而安的生活", type: "P" }
+            ]
+          },
+          {
+            question: "5、在工作中，你更喜欢：",
+            answers: [
+              { text: "独立完成任务", type: "I" },
+              { text: "与团队成员合作完成任务", type: "E" }
+            ]
+          },
+          {
+            question: "6、你更喜欢从经验中学习还是通过新观念和理论？",
+            answers: [
+              { text: "从经验中学习", type: "S" },
+              { text: "通过新观念和理论", type: "N" }
+            ]
+          },
+          {
+            question: "7、在做决策时，你更注重：",
+            answers: [
+              { text: "逻辑和客观事实", type: "T" },
+              { text: "个人价值观和情感", type: "F" }
+            ]
+          },
+          {
+            question: "8、在社交场合中，你更倾向于：",
+            answers: [
+              { text: "主动参与，享受与他人互动", type: "E" },
+              { text: "观察并倾听，保持低调", type: "I" }
+            ]
+          },
+          {
+            question: "9、你更倾向于关注：",
+            answers: [
+              { text: "现实和实际情况", type: "S" },
+              { text: "未来的可能性和潜在机会", type: "N" }
+            ]
+          },
+            {
+            question: "10、当面对一个新项目时，你更倾向于：",
+            answers: [
+              { text: "制定详细的计划并按步骤执行", type: "J" },
+              { text: "保持灵活，随时调整策略", type: "P" }
+            ]
+          },
+          {
+            question: "11、你更喜欢哪种决策方式：",
+            answers: [
+              { text: "客观分析，理性判断", type: "T" },
+              { text: "凭直觉，考虑他人情感", type: "F" }
+            ]
+          },
+          {
+            question: "12、在日常生活中，你更注重：",
+            answers: [
+              { text: "创新思维和新观念", type: "N" },
+              { text: "常规方法和实际应用", type: "S" }
+            ]
+          },
+          {
+            question: "13、你更喜欢与哪种人相处：",
+            answers: [
+              { text: "热情、健谈的人", type: "E" },
+              { text: "深思熟虑、内向的人", type: "I" }
+            ]
+          },
+          {
+            question: "14、在处理问题时，你更倾向于：",
+            answers: [
+              { text: "详细分析，寻求最佳解决方案", type: "T" },
+              { text: "考虑各方利益，寻求和谐共识", type: "F" }
+            ]
+          },
+          {
+            question: "15、你更倾向于相信：",
+            answers: [
+              { text: "事实和数据", type: "S" },
+              { text: "直觉和灵感", type: "N" }
+            ]
+          },
+          {
+            question: "16、在规划未来时，你更倾向于：",
+            answers: [
+              { text: "设定明确的目标和计划", type: "J" },
+              { text: "保持开放，随机应变", type: "P" }
+            ]
+          },
+          {
+            question: "17、在团队合作中，你更喜欢：",
+            answers: [
+              { text: "担任领导角色，推动团队进步", type: "E" },
+              { text: "担任支持角色，协助团队成员", type: "I" }
+            ]
+          },
+          {
+            question: "18、你更喜欢从哪种途径获取信息：",
+            answers: [
+              { text: "亲身体验和实践", type: "S" },
+              { text: "学习新知识和理论", type: "N" }
+            ]
+          },
+            {
+            question: "19、在与他人交往中，你更注重：",
+            answers: [
+              { text: "沟通顺畅，气氛和谐", type: "F" },
+              { text: "逻辑清晰，观点明确", type: "T" }
+            ]
+          },
+          {
+            question: "20、在处理任务时，你更倾向于：",
+            answers: [
+              { text: "一次专注于一个任务", type: "J" },
+              { text: "同时进行多个任务", type: "P" }
+            ]
+          },
+          {
+            question: "21、你更喜欢在哪种环境中工作：",
+            answers: [
+              { text: "安静、独立的环境", type: "I" },
+              { text: "热闹、互动的环境", type: "E" }
+            ]
+          },
+          {
+            question: "22、在学习新知识时，你更倾向于：",
+            answers: [
+              { text: "关注细节和具体实例", type: "S" },
+              { text: "探讨抽象概念和原理", type: "N" }
+            ]
+          },
+          {
+            question: "23、当遇到问题时，你更倾向于：",
+            answers: [
+              { text: "采用实用的方法解决问题", type: "T" },
+              { text: "考虑他人的感受和需求", type: "F" }
+            ]
+          },
+          {
+            question: "24、你更喜欢通过哪种方式安排自己的生活：",
+            answers: [
+              { text: "设定计划，按部就班", type: "J" },
+              { text: "随性生活，随遇而安", type: "P" }
+            ]
+          },
+          {
+            question: "25、在面对压力时，你更倾向于：",
+            answers: [
+              { text: "与他人分享自己的感受", type: "E" },
+              { text: "独自思考和解决问题", type: "I" }
+            ]
+          },
+          {
+            question: "26、你更喜欢从哪种角度看待问题：",
+            answers: [
+              { text: "从具体事实出发", type: "S" },
+              { text: "从整体大局出发", type: "N" }
+            ]
+          },
+            {
+            question: "27、做决策时，你更注重：",
+            answers: [
+              { text: "客观事实和逻辑分析", type: "T" },
+              { text: "人际关系和他人感受", type: "F" }
+            ]
+          },
+          {
+            question: "28、面对突发事件时，你更善于：",
+            answers: [
+              { text: "快速调整计划应对", type: "P" },
+              { text: "根据既定计划稳步推进", type: "J" }
+            ]
+          },
+          {
+            question: "29、在团队合作中，你更善于：",
+            answers: [
+              { text: "启发他人，提供创意", type: "N" },
+              { text: "着眼实际，解决问题", type: "S" }
+            ]
+          },
+          {
+            question: "30、你更喜欢通过哪种方式表达自己：",
+            answers: [
+              { text: "书面表达，确保清晰明了", type: "I" },
+              { text: "口头表达，直接沟通交流", type: "E" }
+            ]
+          },
+          {
+            question: "31、在社交场合中，你更倾向于：",
+            answers: [
+              { text: "与熟悉的人保持亲密交流", type: "I" },
+              { text: "结识新朋友，拓展人际关系", type: "E" }
+            ]
+          },
+          {
+            question: "32、在思考问题时，你更倾向于：",
+            answers: [
+              { text: "深入探讨一个观点或想法", type: "I" },
+              { text: "广泛收集各种观点或想法", type: "E" }
+            ]
+          }
+
+        ];
+        //进度条
+        function updateProgress() {
+            const progress = document.getElementById("progress");
+            progress.innerText = `Answered questions: ${currentQuestion} / ${mbtiQuestions.length}`;
+        }
+
+  // Add your MBTI explanations and image URLs here
+        const mbtiExplanations = {
+              INFP: {
+                description: "INFP 类型的人是理想主义者和内向的创新者。他们热衷于帮助别人实现其潜力，并关心他人的情感需求。他们喜欢探索抽象概念，并通过创意表达来分享自己的感受。",
+                imageUrl: "./images/infp.jpg"
+              },
+              INFJ: {
+                description: "INFJ 类型的人是内向的理想主义者，具有强烈的价值观和直觉。他们关注人际关系和创意表达，擅长深入了解他人的需求和动机。他们通常有高度的洞察力和同情心。",
+                imageUrl: "./images/infj.jpg"
+              },
+              INTP: {
+                description: "INTP 类型的人是逻辑和内向的思考者，擅长理解复杂的概念和解决问题。他们独立、好奇并具有创新精神，喜欢研究新颖的观点。他们通常对抽象思考和理论分析感兴趣。",
+                imageUrl: "./images/intp.jpg"
+              },
+              INTJ: {
+                description: "INTJ 类型的人是内向的战略家，具有很强的计划和组织能力。他们是精明的决策者，能够看到长远的前景和可能性。他们通常在实现目标和优化系统方面表现出色。",
+                imageUrl: "./images/intj.jpg"
+              },
+              ISFP: {
+                description: "ISFP 类型的人是敏感的观察者和内向的艺术家。他们善于表达自己的情感并关心他人的需求。他们拥有自然的审美观，通常在艺术和创意领域表现出色。他们珍视自由和个性，以及与他人的亲密联系。",
+                imageUrl: "./images/isfp.jpg"
+                },
+              ISFJ: {
+                description: "ISFJ 类型的人是内向的保护者，关注他人的需求和福祉。他们是忠诚的支持者，乐于帮助别人。他们通常擅长组织和规划，并关注细节。他们重视传统和家庭价值观。",
+                imageUrl: "./images/isfj.jpg"
+                },
+              ISTP: {
+                description: "ISTP 类型的人是务实的解决者和内向的探险家。他们善于观察和分析，通常能够迅速找到解决问题的方法。他们擅长技术和手工艺，通常喜欢追求新鲜刺激的活动。",
+                imageUrl: "./images/istp.jpg"
+                },
+              ISTJ: {
+                description: "ISTJ 类型的人是内向的实践者，注重事实和细节。他们严谨、负责任，擅长制定计划和执行任务。他们重视传统和规则，并在组织和管理方面表现出色。",
+                imageUrl: "./images/istj.jpg"
+                },
+            ENFP: {
+                description: "ENFP 类型的人是热情的激励者和外向的创新者。他们喜欢与他人建立联系，并鼓舞他人追求自己的梦想。他们充满好奇心和创造力，通常在社交和创意领域表现出色。",
+                imageUrl: "./images/enfp.jpg"
+                },
+            ENFJ: {
+                description: "ENFJ 类型的人是外向的领导者，关注他人的需求和感受。他们善于沟通和协调，能够激发团队的热情和凝聚力。他们通常关心社会事务，并寻求创造积极的变革。",
+                imageUrl: "./images/enfj.jpg"
+                },
+            ENTP: {
+                description: "ENTP 类型的人是机智的辩手和外向的探险家。他们善于发现新的可能性，并在思考和讨论中寻求刺激。他们通常具有广泛的兴趣和多样化的技能，喜欢挑战传统观念。",
+                imageUrl: "./images/entp.jpg"
+                },
+            ENTJ: {
+                description: "ENTJ 类型的人是果断的领导者和外向的战略家。他们擅长设定目标并制定计划，能够高效地管理资源和团队。他们具有很强的分析和组织能力，通常在商业和管理领域表现出色。",
+                imageUrl: "./images/entj.jpg"
+                },
+                ESFP: {
+                description: "ESFP 类型的人是热情洋溢的表演者和外向的享乐主义者。他们善于与他人建立联系，并在社交场合中焕发光彩。他们通常富有同情心和适应力，善于处理紧急情况。",
+                imageUrl: "./images/esfp.jpg"
+                },
+                ESFJ: {
+                description: "ESFJ 类型的人是外向的关怀者，关注他人的需求和福祉。他们擅长协调和沟通，能够创造和谐的人际关系。他们通常在社区和家庭中发挥关键作用，关注传统和道德价值观。",
+                imageUrl: "./images/esfj.jpg"
+                },
+                ESTP: {
+                description: "ESTP 类型的人是务实的冒险家和外向的解决者。他们善于应对紧急情况，并能迅速做出决策。他们通常在技术和手工艺方面表现出色，喜欢追求新鲜刺激的活动。",
+                imageUrl: "./images/estp.jpg"
+                },
+                ESTJ: {
+                description: "ESTJ 类型的人是外向的管理者，注重效率和秩序。他们擅长组织和制定计划，能够高效地执行任务。他们重视规则和传统，并在领导和决策方面表现出色。",
+                imageUrl: "./images/estj.jpg"
+                }
+            };
+
+
+        let currentQuestion = 0;
+        let userAnswers = [];
+        function loadNextQuestion() {
+                if (currentQuestion >= mbtiQuestions.length) {
+                    return;
+                }
+
+                document.getElementById("question").innerText = mbtiQuestions[currentQuestion].question;
+                
+                const answerRow1 = document.createElement("div");
+                answerRow1.className = "answer-row";
+
+                const answerA = document.createElement("button");
+                answerA.className = "answer-button";
+                answerA.innerText = "A: " + mbtiQuestions[currentQuestion].answers[0].text;
+                answerA.onclick = () => saveAnswer(0);
+                answerRow1.appendChild(answerA);
+
+                const answerRow2 = document.createElement("div");
+                answerRow2.className = "answer-row";
+
+                const answerB = document.createElement("button");
+                answerB.className = "answer-button";
+                answerB.innerText = "B: " + mbtiQuestions[currentQuestion].answers[1].text;
+                answerB.onclick = () => saveAnswer(1);
+                answerRow2.appendChild(answerB);
+
+                const answersDiv = document.getElementById("answers");
+                answersDiv.innerHTML = "";
+                answersDiv.appendChild(answerRow1);
+                answersDiv.appendChild(answerRow2);
+
+                currentQuestion++;
+
+                const progressBar = document.getElementById("progressBar");
+                const progressPercentage = (currentQuestion / mbtiQuestions.length) * 100;
+                progressBar.style.width = progressPercentage + "%";
+
+            }
+
+
+
+           function saveAnswer(answer) {
+            userAnswers.push(answer);
+            localStorage.setItem("userAnswers", JSON.stringify(userAnswers));
+            
+            // 检查是否已回答所有问题
+            if (currentQuestion >= mbtiQuestions.length) {
+                calculateMBTI(); // 自动显示结果
+            } else {
+                loadNextQuestion();
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            toast.innerText = message;
+            toast.classList.add("show");
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 3000);
+        }
+
+
+        function calculateMBTI() {
+            const savedUserAnswers = JSON.parse(localStorage.getItem("userAnswers"));
+            if (savedUserAnswers.length < mbtiQuestions.length) {
+                showToast("Please answer all the questions!");
+                return;
+            }
+
+            let E = 0;
+            let I = 0;
+            let S = 0;
+            let N = 0;
+            let T = 0;
+            let F = 0;
+            let J = 0;
+            let P = 0;
+
+            for (let i = 0; i < savedUserAnswers.length; i++) {
+                if (i % 4 === 0) {
+                    if (savedUserAnswers[i] == 0) {
+                        E++;
+                    } else {
+                        I++;
+                    }
+                } else if (i % 4 === 1) {
+                    if (savedUserAnswers[i] == 0) {
+                        S++;
+                    } else {
+                        N++;
+                    }
+                } else if (i % 4 === 2) {
+                    if (savedUserAnswers[i] == 0) {
+                        T++;
+                    } else {
+                        F++;
+                    }
+                } else {
+                    if (savedUserAnswers[i] == 0) {
+                        J++;
+                    } else {
+                        P++;
+                    }
+                }
+            }
+
+            const firstDimension = E >= I ? "E" : "I";
+            const secondDimension = S >= N ? "S" : "N";
+            const thirdDimension = T >= F ? "T" : "F";
+            const fourthDimension = J >= P ? "J" : "P";
+
+            const result = firstDimension + secondDimension + thirdDimension + fourthDimension;
+            const mbtiExplanation = mbtiExplanations[result];
+            const resultDiv = document.getElementById("result");
+              resultDiv.innerHTML = `
+                <p>你的MBTI类型是: ${result}</p>
+                <p>解释：${mbtiExplanation.description}</p>
+      
+              `;
+            }
+
+            // const resultDiv = document.getElementById("result");
+            //   resultDiv.innerHTML = `
+            //     <p>Your MBTI type is: ${result}</p>
+            //     /<p>${mbtiExplanation.description}</p>
+            //     <img src="${mbtiExplanation.imageUrl}" alt="${result} personality type">
+            //   `;
+            // }
+
+            function resetTest() {
+                currentQuestion = 0;
+                userAnswers = [];
+                localStorage.removeItem("userAnswers");
+                //document.getElementById("result").innerText = "";
+                loadNextQuestion();
+            }
+            loadNextQuestion();
+      
+    </script>
+</body>
+</html>
